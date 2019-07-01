@@ -15,7 +15,13 @@ def build_model(input_size):
 
     return model
 
-train = pd.read_csv('training_set_final_0.csv')
+
+def mix(df):
+    return df.sample(frac=1).reset_index(drop=True)
+
+
+train = pd.read_csv('training_set_final_1.csv')
+train = mix(train)
 train_features = train.iloc[:, 1:].to_numpy()
 train_labels = train.iloc[:, 0].to_numpy()
 

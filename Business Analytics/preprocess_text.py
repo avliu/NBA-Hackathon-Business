@@ -77,60 +77,60 @@ import re
 #   2. found stats for hodlout_set
 #       a. 1-end, holdout_set_same_stats_1.csv, instagram_followers_5.csv
 
-def get_followers_count(username):
-    ret = requests.get(f'https://www.instagram.com/{username}/?__a=1')
-    if ret.status_code == 404:
-        return 0
-    elif ret.status_code == 429:
-        return -429
-    ret_dict = ret.json()
-    count = ret_dict['graphql']['user']['edge_followed_by']['count']
-    return count
-
-dataset = 'training_set_same'
-
-df_instagram_usernames = pd.read_csv('text_processing/instagram_usernames.csv', index_col=0)
-df_instagram_usernames.index = map(str.lower, df_instagram_usernames.index)
-df_instagram_followers = pd.read_csv('text_processing/instagram_followers_5.csv', index_col=0)
-
-df_train = pd.read_csv(f'text_processing/{dataset}.csv')
-df_train = df_train.loc[:,'Description']
-
-columns = ['player', 'player_followers', 'team', 'team_followers', 'celebrity', 'celebrity_followers',
-         'organization', 'organization_followers']
-df_instagram_stats = pd.DataFrame(0, index=range(df_train.shape[0]), columns=columns)
-
-stop_flag = False
-
-for i in range(0, len(df_train)):
-    x = df_train[i]
-    if type(x)==str:
-        scraped_usernames = re.findall('@[A-Za-z0-9_.]+', x)
-        scraped_usernames = [s[1:].lower() for s in scraped_usernames]
-        for scraped_username in scraped_usernames:
-            actual_username = df_instagram_usernames.loc[scraped_username, 'actual username']
-            user_type = df_instagram_usernames.loc[scraped_username, 'type']
-            if type(actual_username) == pd.Series:
-                actual_username = actual_username.iloc[0].lower()
-                user_type = user_type.iloc[0]
-            else:
-                actual_username = actual_username.lower()
-            follower_count = 0
-            follower_count = df_instagram_followers.loc[actual_username, 'followers']
-            if follower_count == -1:
-                follower_count = get_followers_count(actual_username)
-                if follower_count == -429:
-                    stop_flag = True
-                    break
-                df_instagram_followers.loc[actual_username, 'followers'] = follower_count
-            df_instagram_stats.iloc[i, (user_type - 1) * 2] += 1
-            df_instagram_stats.iloc[i, (user_type - 1) * 2 + 1] += follower_count
-        if stop_flag:
-            print(f'kicked out at line {i}')
-            break
-
-df_instagram_followers.to_csv('text_processing/instagram_followers_6.csv')
-df_instagram_stats.to_csv(f'text_processing/{dataset}_stats_1_1.csv')
+# def get_followers_count(username):
+#     ret = requests.get(f'https://www.instagram.com/{username}/?__a=1')
+#     if ret.status_code == 404:
+#         return 0
+#     elif ret.status_code == 429:
+#         return -429
+#     ret_dict = ret.json()
+#     count = ret_dict['graphql']['user']['edge_followed_by']['count']
+#     return count
+#
+# dataset = 'training_set_same'
+#
+# df_instagram_usernames = pd.read_csv('text_processing/instagram_usernames.csv', index_col=0)
+# df_instagram_usernames.index = map(str.lower, df_instagram_usernames.index)
+# df_instagram_followers = pd.read_csv('text_processing/instagram_followers_5.csv', index_col=0)
+#
+# df_train = pd.read_csv(f'text_processing/{dataset}.csv')
+# df_train = df_train.loc[:,'Description']
+#
+# columns = ['player', 'player_followers', 'team', 'team_followers', 'celebrity', 'celebrity_followers',
+#          'organization', 'organization_followers']
+# df_instagram_stats = pd.DataFrame(0, index=range(df_train.shape[0]), columns=columns)
+#
+# stop_flag = False
+#
+# for i in range(0, len(df_train)):
+#     x = df_train[i]
+#     if type(x)==str:
+#         scraped_usernames = re.findall('@[A-Za-z0-9_.]+', x)
+#         scraped_usernames = [s[1:].lower() for s in scraped_usernames]
+#         for scraped_username in scraped_usernames:
+#             actual_username = df_instagram_usernames.loc[scraped_username, 'actual username']
+#             user_type = df_instagram_usernames.loc[scraped_username, 'type']
+#             if type(actual_username) == pd.Series:
+#                 actual_username = actual_username.iloc[0].lower()
+#                 user_type = user_type.iloc[0]
+#             else:
+#                 actual_username = actual_username.lower()
+#             follower_count = 0
+#             follower_count = df_instagram_followers.loc[actual_username, 'followers']
+#             if follower_count == -1:
+#                 follower_count = get_followers_count(actual_username)
+#                 if follower_count == -429:
+#                     stop_flag = True
+#                     break
+#                 df_instagram_followers.loc[actual_username, 'followers'] = follower_count
+#             df_instagram_stats.iloc[i, (user_type - 1) * 2] += 1
+#             df_instagram_stats.iloc[i, (user_type - 1) * 2 + 1] += follower_count
+#         if stop_flag:
+#             print(f'kicked out at line {i}')
+#             break
+#
+# df_instagram_followers.to_csv('text_processing/instagram_followers_6.csv')
+# df_instagram_stats.to_csv(f'text_processing/{dataset}_stats_1_1.csv')
 
 
 # 4. Since the stats were updated iteratively for training_set,
@@ -144,14 +144,14 @@ df_instagram_stats.to_csv(f'text_processing/{dataset}_stats_1_1.csv')
 # df_training_final = df_training_final.append(
 #     pd.read_csv('text_processing/training_set_same_stats_4.csv', index_col=0).loc[4556:])
 # df_training_final.to_csv('text_processing/training_set_stats_final.csv')
-
-# df_holdout_final = pd.read_csv('text_processing/holdout_set_same_stats_1.csv', index_col=0)
-# df_holdout_final.to_csv('text_processing/holdout_set_stats_final.csv')
 #
-# df_followers_final = pd.read_csv('text_processing/instagram_followers_5.csv', index_col=0)
+# # df_holdout_final = pd.read_csv('text_processing/holdout_set_same_stats_1.csv', index_col=0)
+# # df_holdout_final.to_csv('text_processing/holdout_set_same_stats_final.csv')
+#
+# df_followers_final = pd.read_csv('text_processing/instagram_followers_6.csv', index_col=0)
 # df_followers_final.to_csv('text_processing/instagram_followers_final.csv')
 
 
-# FINAL OUTPUTS: training_set_stats_final.csv, holdout_set_stats_final.csv, instagram_folowers_final.csv
+# FINAL OUTPUTS: training_set_stats_final.csv, holdout_set_same_stats_final.csv, instagram_folowers_final.csv
 
 
