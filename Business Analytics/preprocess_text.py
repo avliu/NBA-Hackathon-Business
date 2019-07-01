@@ -136,20 +136,22 @@ import re
 # 4. Since the stats were updated iteratively for training_set,
 # we still need to combine all of them to create the final text output
 
-# df_training_final = pd.read_csv('text_processing/training_set_same_stats_1.csv', index_col=0).loc[:806]
-# df_training_final = df_training_final.append(
-#     pd.read_csv('text_processing/training_set_same_stats_2.csv', index_col=0).loc[806:2541])
-# df_training_final = df_training_final.append(
-#     pd.read_csv('text_processing/training_set_same_stats_3.csv', index_col=0).loc[2541:4556])
-# df_training_final = df_training_final.append(
-#     pd.read_csv('text_processing/training_set_same_stats_4.csv', index_col=0).loc[4556:])
-# df_training_final.to_csv('text_processing/training_set_stats_final.csv')
-#
+df_training_final = pd.read_csv('text_processing/training_set_same_stats_1.csv', index_col=0).loc[:805]
+df_training_final = df_training_final.append(
+    pd.read_csv('text_processing/training_set_same_stats_2.csv', index_col=0).loc[806:2540])
+df_training_final = df_training_final.append(
+    pd.read_csv('text_processing/training_set_same_stats_3.csv', index_col=0).loc[2541:4555])
+df_training_final = df_training_final.append(
+    pd.read_csv('text_processing/training_set_same_stats_4.csv', index_col=0).loc[4556:])
+df_training_final.to_csv('text_processing/training_set_stats_final.csv')
+
 # df_holdout_final = pd.read_csv('text_processing/holdout_set_same_stats_1.csv', index_col=0)
 # df_holdout_final.to_csv('text_processing/holdout_set_stats_final.csv')
-
+#
 # df_followers_final = pd.read_csv('text_processing/instagram_followers_5.csv', index_col=0)
 # df_followers_final.to_csv('text_processing/instagram_followers_final.csv')
 
 
 # FINAL OUTPUTS: training_set_stats_final.csv, holdout_set_stats_final.csv, instagram_folowers_final.csv
+
+
