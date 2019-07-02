@@ -1,6 +1,8 @@
 import pandas as pd
 from fastai.tabular import add_datepart
 import re
+import os
+import numpy as np
 
 
 def normalize(df, columns):
@@ -95,3 +97,32 @@ def normalize(df, columns):
 #     df_all.loc[:, 'organization'] = df_all.loc[:, 'organization'] / 5
 #
 #     df_all.to_csv(f'{dataset}_final_1.csv', index=False)
+
+
+# 4. repeat above, but don't normalize follower columns: holdout_set_final_2.csv, training_set_stats_final_2.csv
+
+# datasets = ('training_set', 'holdout_set')
+#
+# for dataset in datasets:
+#     df_text = pd.read_csv(f'text_processing/{dataset}_same_stats_final.csv', index_col=0)
+#     df_stats = pd.read_csv(f'{dataset}_final_0.csv')
+#     df_all = df_stats.copy()
+#
+#     for c in df_text.columns:
+#         df_all[c] = df_text.loc[:,c]
+#
+#     # normalize(df_all, ('player_followers',  'team_followers', 'celebrity_followers', 'organization_followers'))
+#
+#     # hacky... should fix
+#     df_all.loc[:, 'CreatedDayofweek'] = df_all.loc[:, 'CreatedDayofweek'] / 7
+#     df_all.loc[:, 'player'] = df_all.loc[:, 'player'] / 9
+#     df_all.loc[:, 'team'] = df_all.loc[:, 'team'] / 7
+#     df_all.loc[:, 'celebrity'] = df_all.loc[:, 'celebrity'] / 4
+#     df_all.loc[:, 'organization'] = df_all.loc[:, 'organization'] / 5
+#
+#     df_all.loc[:, 'player_followers'] = df_all.loc[:, 'player_followers'] / 101545505
+#     df_all.loc[:, 'team_followers'] = df_all.loc[:, 'team_followers'] / 30558050
+#     df_all.loc[:, 'celebrity_followers'] = df_all.loc[:, 'celebrity_followers'] / 128930514
+#     df_all.loc[:, 'organization_followers'] = df_all.loc[:, 'organization_followers'] / 305743706
+#
+#     df_all.to_csv(f'{dataset}_final_2.csv', index=False)

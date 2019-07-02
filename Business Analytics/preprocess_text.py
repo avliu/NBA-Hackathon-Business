@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 import requests
 import re
+from keras.preprocessing.text import Tokenizer
+from keras.preprocessing.sequence import pad_sequences
 
 # 1. prepare text data- map scraped instagram usernames to actual usernames
 #    WRONG USERNAMES (changed only in training_set_same.csv and holdout_set_same.csv)
@@ -154,4 +156,61 @@ import re
 
 # FINAL OUTPUTS: training_set_stats_final.csv, holdout_set_same_stats_final.csv, instagram_folowers_final.csv
 
+
+# 5. Actual text processing- creating file for just text, then tokenizing it
+
+# df_train = pd.read_csv('text_processing/training_set_same.csv')
+# df_train = pd.DataFrame(df_train.loc[:,'Description'])
+# df_train.to_csv('text_processing/training_set_same_text.csv', index='Description')
+#
+# df_holdout = pd.read_csv('text_processing/holdout_set_same.csv')
+# df_holdout = pd.DataFrame(df_holdout.loc[:,'Description'])
+# df_holdout.to_csv('text_processing/holdout_set_same_text.csv', index='Description')
+
+
+def get_tokenizer(max_words):
+
+    texts = pd.read_csv(f'text_processing/training_set_same_text.csv', index_col=0)
+    texts = texts.loc[:, 'Description'].to_list()
+    texts = [str(text) for text in texts]
+
+    tokenizer = Tokenizer(num_words=max_words)
+    tokenizer.fit_on_texts(texts)
+
+    return tokenizer
+
+
+def get_tokenized_text(tokenizer, texts, maxlen):
+
+    texts = [str(text) for text in texts]
+
+    sequences = tokenizer.texts_to_sequences(texts)
+
+    data = pad_sequences(sequences, maxlen=maxlen)
+
+    return data
+
+
+def get_text_embedding_matrix(tokenizer, embedding_dim, max_words):
+
+    embeddings_index = {}
+    f = open(f'glove.6B/glove.6B.100d.txt', 'r', encoding='utf-8')
+    for line in f:
+        values = line.split()
+        word = values[0]
+        coefs = np.asarray(values[1:], dtype='float32')
+        embeddings_index[word] = coefs
+    f.close()
+
+    print('Found %s word vectors.' % len(embeddings_index))
+
+    embedding_matrix = np.zeros((max_words, embedding_dim))
+    for word, i in tokenizer.word_index.items():
+        embedding_vector = embeddings_index.get(word)
+        if i < max_words:
+            if embedding_vector is not None:
+                # Words not found in embedding index will be all-zeros.
+                embedding_matrix[i] = embedding_vector
+
+    return embedding_matrix
 
