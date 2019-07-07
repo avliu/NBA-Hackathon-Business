@@ -168,13 +168,32 @@ from keras.preprocessing.sequence import pad_sequences
 # df_holdout.to_csv('text_processing/holdout_set_same_text.csv', index='Description')
 
 
+def get_username_tokenizer(max_usernames=200):
+    texts = pd.read_csv(f'text_processing/training_set_same_text.csv', index_col=0)
+    texts = texts.loc[:, 'Description'].to_list()
+    new_texts = []
+    for text in texts:
+        text = str(text)
+        usernames = set(re.findall('@[A-Za-z0-9_.]+', text))
+        usernames = usernames.union(set(re.findall('#[A-Za-z0-9]+', text)))
+        text = ''
+        for username in usernames:
+            text += username
+            text += ' '
+        new_texts.append(text)
+    tokenizer = Tokenizer(num_words=max_usernames, filters='!"#$%&()*+,-/:;<=>?@[\\]^`{|}~\t\n')
+    tokenizer.fit_on_texts(new_texts)
+
+    return tokenizer
+
+
 def get_tokenizer(max_words):
 
     texts = pd.read_csv(f'text_processing/training_set_same_text.csv', index_col=0)
     texts = texts.loc[:, 'Description'].to_list()
     texts = [str(text) for text in texts]
 
-    tokenizer = Tokenizer(num_words=max_words)
+    tokenizer = Tokenizer(num_words=max_words, filters='!"#$%&()*+,-/:;<=>?@[\\]^`{|}~\t\n')
     tokenizer.fit_on_texts(texts)
 
     return tokenizer
