@@ -194,7 +194,7 @@ def get_tokenized_text(tokenizer, texts, maxlen):
 def get_text_embedding_matrix(tokenizer, embedding_dim, max_words):
 
     embeddings_index = {}
-    f = open(f'glove.6B/glove.6B.100d.txt', 'r', encoding='utf-8')
+    f = open(f'glove.6B/glove.6B.50d.txt', 'r', encoding='utf-8')
     for line in f:
         values = line.split()
         word = values[0]
