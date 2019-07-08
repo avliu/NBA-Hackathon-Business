@@ -2,8 +2,6 @@ import tensorflow as tf
 from tensorflow import keras
 import pandas as pd
 import numpy as np
-from preprocess_text import get_tokenizer, get_tokenized_text, get_text_embedding_matrix, get_username_tokenizer
-
 
 
 def build_model(start_node_size, optimizer, input_size_stats):
@@ -67,9 +65,46 @@ def train_and_test(start_node_size, optimizer):
 
     print(f'start_node_size: {start_node_size}, optimizer: {optimizer}, val: {np.mean(all_scores)}')
     print('-------------------------------------------------------------------------------------')
+    return model, val_mape
+
+def final_train(start_node_size, optimizer):
+
+    train = pd.read_csv('training_set_final_2.csv')
+    train = mix(train)
+    train_features_stats = train.iloc[:, 1:].to_numpy()
+    train_labels = train.iloc[:, 0].to_numpy()
+
+    num_epochs = 30
+
+    early_stop = keras.callbacks.EarlyStopping(monitor='loss', patience=10)
+    model = build_model(start_node_size, optimizer, train_features_stats.shape[-1])
+    model.fit(train_features_stats, train_labels,
+              epochs=num_epochs, batch_size=1, callbacks=[early_stop], verbose=True)
+
+    return model
 
 
-for i in (32, 16, 64, 128, 256):
-    for j in ('adadelta', 'rmsprop', 'adagrad', 'adam', 'adamax'):
-        train_and_test(i, j)
+best_model = None
+best_mape = 100
+best_node_size = 0
+best_optimizer = ''
 
+for i in (32, 64, 128):
+    for j in ('adadelta', 'rmsprop', 'adam', 'adamax'):
+        model, val_mape = train_and_test(i, j)
+        if val_mape < best_mape:
+            best_model = model
+            best_mape = val_mape
+            best_node_size = i
+            best_optimizer = j
+
+final_model = final_train(best_node_size, best_optimizer)
+
+holdout_set = pd.read_csv('holdout_set_final_2.csv')
+holdout_features_stats = holdout_set.iloc[:, 1:].to_numpy()
+predictions = final_model.predict(x=holdout_features_stats)
+
+df = pd.DataFrame(predictions, columns=['Engagements'])
+df.to_csv('predictions_2.csv')
+
+print(f'final model had node size {best_node_size} and optimizer {best_optimizer}')
