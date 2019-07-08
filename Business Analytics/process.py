@@ -1,4 +1,3 @@
-import tensorflow as tf
 from tensorflow import keras
 import pandas as pd
 import numpy as np
@@ -66,6 +65,7 @@ def train_and_test(start_node_size, optimizer):
     print(f'start_node_size: {start_node_size}, optimizer: {optimizer}, val: {np.mean(all_scores)}')
     print('-------------------------------------------------------------------------------------')
     return model, val_mape
+
 
 def final_train(start_node_size, optimizer):
 
