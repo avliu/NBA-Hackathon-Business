@@ -33,9 +33,9 @@ def combine(df1, df2):
     return new_df
 
 
-def train_and_test(start_node_size, optimizer):
+def train_and_test(start_node_size, optimizer, data_file_name):
 
-    train = pd.read_csv('training_set_final_2.csv')
+    train = pd.read_csv(data_file_name)
     train = mix(train)
     train_features_stats = train.iloc[:, 1:].to_numpy()
     train_labels = train.iloc[:, 0].to_numpy()
@@ -67,9 +67,9 @@ def train_and_test(start_node_size, optimizer):
     return model, val_mape
 
 
-def final_train(start_node_size, optimizer):
+def final_train(start_node_size, optimizer, training_set_file_name):
 
-    train = pd.read_csv('training_set_final_2.csv')
+    train = pd.read_csv(training_set_file_name)
     train = mix(train)
     train_features_stats = train.iloc[:, 1:].to_numpy()
     train_labels = train.iloc[:, 0].to_numpy()
@@ -84,27 +84,33 @@ def final_train(start_node_size, optimizer):
     return model
 
 
-best_model = None
-best_mape = 100
-best_node_size = 0
-best_optimizer = ''
+def dora_the_naive_hyperparameter_explorer(node_list, optimizer_list, data_set_number):
 
-for i in (32, 64, 128):
-    for j in ('adadelta', 'rmsprop', 'adam', 'adamax'):
-        model, val_mape = train_and_test(i, j)
-        if val_mape < best_mape:
-            best_model = model
-            best_mape = val_mape
-            best_node_size = i
-            best_optimizer = j
+    training_set_file_name = f'training_set_final_{data_set_number}.csv'
 
-final_model = final_train(best_node_size, best_optimizer)
+    best_mape = 100
+    best_node_size = 0
+    best_optimizer = ''
 
-holdout_set = pd.read_csv('holdout_set_final_2.csv')
-holdout_features_stats = holdout_set.iloc[:, 1:].to_numpy()
-predictions = final_model.predict(x=holdout_features_stats)
+    for i in node_list:
+        for j in optimizer_list:
+                model, val_mape = train_and_test(i, j, training_set_file_name)
+                if val_mape < best_mape:
+                    best_mape = val_mape
+                    best_node_size = i
+                    best_optimizer = j
 
-df = pd.DataFrame(predictions, columns=['Engagements'])
-df.to_csv('predictions_2.csv')
+    final_model = final_train(best_node_size, best_optimizer, training_set_file_name)
 
-print(f'final model had node size {best_node_size} and optimizer {best_optimizer}')
+    holdout_set = pd.read_csv(f'holdout_set_final_{data_set_number}.csv')
+    holdout_features_stats = holdout_set.iloc[:, 1:].to_numpy()
+    predictions = final_model.predict(x=holdout_features_stats)
+
+    df = pd.DataFrame(predictions, columns=['Engagements'])
+    df.to_csv(f'predictions_{data_set_number}.csv')
+
+    print(f'final model had node size {best_node_size} and optimizer {best_optimizer}')
+
+
+# Best node size was 64, best optimizer was Adadelta, val MAPE ~ 7.5%
+dora_the_naive_hyperparameter_explorer((32, 64, 128), ('adadelta', 'rmsprop', 'adam', 'adamax'), 3)
