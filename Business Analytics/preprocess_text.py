@@ -1,9 +1,7 @@
 import pandas as pd
-import numpy as np
 import requests
 import re
-from keras.preprocessing.text import Tokenizer
-from keras.preprocessing.sequence import pad_sequences
+
 
 # 1. prepare text data- map scraped instagram usernames to actual usernames
 #    WRONG USERNAMES:
