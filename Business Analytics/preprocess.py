@@ -13,7 +13,7 @@ def normalize(df, columns):
         (df.loc[:,columns].max() -
          df.loc[:,columns].min())
 
-# 1. add dateparts: holdout_set_final_0.csv, training_set_stats_final_0.csv
+# 1. add dateparts: holdout_set_final_datetimes.csv, training_set_stats_final_datetimes.csv
 
 # df_stats = pd.read_csv('training_set_stats.csv')
 #
@@ -45,8 +45,6 @@ def normalize(df, columns):
 # df_stats_datetime['CreatedTotalMinutes'] = df_stats_datetime.loc[:, 'CreatedHour']*60 +\
 #                                            df_stats_datetime.loc[:,'CreatedMinute']
 # df_stats_datetime = df_stats_datetime.drop(columns=['CreatedHour', 'CreatedMinute'])
-# # df_stats_datetime['CreatedWeekend'] = (df_stats_datetime.loc[:,'CreatedDayofweek']).apply(lambda x: (1 if x > 3 else 0))
-# # df_stats_datetime = df_stats_datetime.drop(columns=['CreatedDayofweek'])
 #
 # df_stats_normalized = df_stats_datetime
 # normalize(df_stats_normalized, ('Followers at Posting','CreatedDayofyear','CreatedTotalMinutes'))
@@ -63,15 +61,9 @@ def normalize(df, columns):
 # df_stats_datetime['CreatedTotalMinutes'] = df_stats_datetime.loc[:, 'CreatedHour']*60 +\
 #                                            df_stats_datetime.loc[:,'CreatedMinute']
 # df_stats_datetime = df_stats_datetime.drop(columns=['CreatedHour', 'CreatedMinute'])
-# # df_stats_datetime['CreatedWeekend'] = (df_stats_datetime.loc[:,'CreatedDayofweek']).apply(lambda x: (1 if x > 3 else 0))
-# # df_stats_datetime = df_stats_datetime.drop(columns=['CreatedDayofweek'])
 #
 # df_stats_normalized = df_stats_datetime
-# df_stats_normalized.loc[:,('Followers at Posting','CreatedDayofyear','CreatedTotalMinutes')] = \
-#     (df_stats_normalized.loc[:,('Followers at Posting','CreatedDayofyear','CreatedTotalMinutes')] -
-#      df_stats_normalized.loc[:,('Followers at Posting','CreatedDayofyear','CreatedTotalMinutes')].mean()) / \
-#     (df_stats_normalized.loc[:,('Followers at Posting','CreatedDayofyear','CreatedTotalMinutes')].max() -
-#      df_stats_normalized.loc[:,('Followers at Posting','CreatedDayofyear','CreatedTotalMinutes')].min())
+# normalize(df_stats_normalized, ('Followers at Posting','CreatedDayofyear','CreatedTotalMinutes'))
 #
 # df_stats_normalized.to_csv('holdout_set_final_0.csv', index=False)
 
@@ -81,7 +73,7 @@ def normalize(df, columns):
 # datasets = ('training_set', 'holdout_set')
 #
 # for dataset in datasets:
-#     df_text = pd.read_csv(f'text_processing/{dataset}_same_stats_final.csv', index_col=0)
+#     df_text = pd.read_csv(f'text_processing/{dataset}_stats_final.csv', index_col=0)
 #     df_stats = pd.read_csv(f'{dataset}_final_0.csv')
 #     df_all = df_stats.copy()
 #
@@ -105,7 +97,7 @@ def normalize(df, columns):
 # datasets = ('training_set', 'holdout_set')
 #
 # for dataset in datasets:
-#     df_text = pd.read_csv(f'text_processing/{dataset}_same_stats_final.csv', index_col=0)
+#     df_text = pd.read_csv(f'text_processing/{dataset}_stats_final.csv', index_col=0)
 #     df_stats = pd.read_csv(f'{dataset}_final_0.csv')
 #     df_all = df_stats.copy()
 #
@@ -126,3 +118,4 @@ def normalize(df, columns):
 #
 #     df_all.to_csv(f'{dataset}_final_2.csv', index=False)
 
+# TODO: Don't drop the year
