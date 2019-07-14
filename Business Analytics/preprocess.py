@@ -13,7 +13,7 @@ def normalize(df, columns):
         (df.loc[:,columns].max() -
          df.loc[:,columns].min())
 
-# 1. add dateparts
+# 1. add dateparts: holdout_set_final_datetimes.csv, training_set_stats_final_datetimes.csv
 
 # df_stats = pd.read_csv('training_set_stats.csv')
 #
@@ -45,8 +45,6 @@ def normalize(df, columns):
 # df_stats_datetime['CreatedTotalMinutes'] = df_stats_datetime.loc[:, 'CreatedHour']*60 +\
 #                                            df_stats_datetime.loc[:,'CreatedMinute']
 # df_stats_datetime = df_stats_datetime.drop(columns=['CreatedHour', 'CreatedMinute'])
-# # df_stats_datetime['CreatedWeekend'] = (df_stats_datetime.loc[:,'CreatedDayofweek']).apply(lambda x: (1 if x > 3 else 0))
-# # df_stats_datetime = df_stats_datetime.drop(columns=['CreatedDayofweek'])
 #
 # df_stats_normalized = df_stats_datetime
 # normalize(df_stats_normalized, ('Followers at Posting','CreatedDayofyear','CreatedTotalMinutes'))
@@ -63,15 +61,9 @@ def normalize(df, columns):
 # df_stats_datetime['CreatedTotalMinutes'] = df_stats_datetime.loc[:, 'CreatedHour']*60 +\
 #                                            df_stats_datetime.loc[:,'CreatedMinute']
 # df_stats_datetime = df_stats_datetime.drop(columns=['CreatedHour', 'CreatedMinute'])
-# # df_stats_datetime['CreatedWeekend'] = (df_stats_datetime.loc[:,'CreatedDayofweek']).apply(lambda x: (1 if x > 3 else 0))
-# # df_stats_datetime = df_stats_datetime.drop(columns=['CreatedDayofweek'])
 #
 # df_stats_normalized = df_stats_datetime
-# df_stats_normalized.loc[:,('Followers at Posting','CreatedDayofyear','CreatedTotalMinutes')] = \
-#     (df_stats_normalized.loc[:,('Followers at Posting','CreatedDayofyear','CreatedTotalMinutes')] -
-#      df_stats_normalized.loc[:,('Followers at Posting','CreatedDayofyear','CreatedTotalMinutes')].mean()) / \
-#     (df_stats_normalized.loc[:,('Followers at Posting','CreatedDayofyear','CreatedTotalMinutes')].max() -
-#      df_stats_normalized.loc[:,('Followers at Posting','CreatedDayofyear','CreatedTotalMinutes')].min())
+# normalize(df_stats_normalized, ('Followers at Posting','CreatedDayofyear','CreatedTotalMinutes'))
 #
 # df_stats_normalized.to_csv('holdout_set_final_0.csv', index=False)
 
@@ -81,7 +73,7 @@ def normalize(df, columns):
 # datasets = ('training_set', 'holdout_set')
 #
 # for dataset in datasets:
-#     df_text = pd.read_csv(f'text_processing/{dataset}_same_stats_final.csv', index_col=0)
+#     df_text = pd.read_csv(f'text_processing/{dataset}_stats_final.csv', index_col=0)
 #     df_stats = pd.read_csv(f'{dataset}_final_0.csv')
 #     df_all = df_stats.copy()
 #
@@ -105,14 +97,12 @@ def normalize(df, columns):
 # datasets = ('training_set', 'holdout_set')
 #
 # for dataset in datasets:
-#     df_text = pd.read_csv(f'text_processing/{dataset}_same_stats_final.csv', index_col=0)
+#     df_text = pd.read_csv(f'text_processing/{dataset}_stats_final.csv', index_col=0)
 #     df_stats = pd.read_csv(f'{dataset}_final_0.csv')
 #     df_all = df_stats.copy()
 #
 #     for c in df_text.columns:
 #         df_all[c] = df_text.loc[:,c]
-#
-#     # normalize(df_all, ('player_followers',  'team_followers', 'celebrity_followers', 'organization_followers'))
 #
 #     # hacky... should fix
 #     df_all.loc[:, 'CreatedDayofweek'] = df_all.loc[:, 'CreatedDayofweek'] / 7
@@ -128,30 +118,4 @@ def normalize(df, columns):
 #
 #     df_all.to_csv(f'{dataset}_final_2.csv', index=False)
 
-
-datasets = ('training_set', 'holdout_set')
-
-for dataset in datasets:
-    df_text = pd.read_csv(f'text_processing/{dataset}_same_stats_final.csv', index_col=0)
-    df_stats = pd.read_csv(f'{dataset}_final_0.csv')
-    df_all = df_stats.copy()
-
-    for c in df_text.columns:
-        df_all[c] = df_text.loc[:,c]
-
-    # normalize(df_all, ('player_followers',  'team_followers', 'celebrity_followers', 'organization_followers'))
-
-    # hacky... should fix
-    df_all.loc[:, 'CreatedDayofweek'] = df_all.loc[:, 'CreatedDayofweek'].apply(lambda x: math.sin((x+1)/7))
-    df_all.loc[:, 'CreatedDayofweek'].apply(lambda x: math.sin((x+1)/365))
-    df_all.loc[:, 'player'] = df_all.loc[:, 'player'] / 9
-    df_all.loc[:, 'team'] = df_all.loc[:, 'team'] / 7
-    df_all.loc[:, 'celebrity'] = df_all.loc[:, 'celebrity'] / 4
-    df_all.loc[:, 'organization'] = df_all.loc[:, 'organization'] / 5
-
-    df_all.loc[:, 'player_followers'] = df_all.loc[:, 'player_followers'].apply(lambda x: math.log10(x)/math.log10(101545505) if x != 0 else 0)
-    df_all.loc[:, 'team_followers'] = df_all.loc[:, 'team_followers'].apply(lambda x: math.log10(x)/math.log10(30558050) if x != 0 else 0)
-    df_all.loc[:, 'celebrity_followers'] = df_all.loc[:, 'celebrity_followers'].apply(lambda x: math.log10(x)/math.log10(128930514) if x != 0 else 0)
-    df_all.loc[:, 'organization_followers'] = df_all.loc[:, 'organization_followers'].apply(lambda x: math.log10(x)/math.log10(305743706) if x != 0 else 0)
-
-    df_all.to_csv(f'{dataset}_final_3.csv', index=False)
+# TODO: Don't drop the year
