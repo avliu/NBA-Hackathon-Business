@@ -2,4 +2,5 @@
 
 Project for NBA Hackathon Application
 
-See README.docx for details
+Prompt: "2019 NBA Hackathon Application - Business Track Prompt.pdf"
+Implementation details: "README.docx"
